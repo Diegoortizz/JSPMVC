@@ -33,10 +33,36 @@ public class ServletAffichage extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-
+        
         DAO dao = new DAO(DataSourceFactory.getDataSource());
+        
+        String action = request.getParameter("action");
+        String taux = request.getParameter("taux");
+        String code = request.getParameter("code");
+        String erreur = "";
+        System.out.println(code + " " + taux + " " + action);
+        
+        if ("ADD".equals(action)) {
+            if ("".equals(code) || "".equals(taux)) {
+                erreur = "Veuillez remplir les deux champs";
+            } else {
+                try {
+                    dao.AddRemise(code, Float.parseFloat(taux));
+                } catch (SQLException s) {
+                    dao.UpdateRemise(code.charAt(0), Float.parseFloat(taux));
+                }
+                
+            }
+        } else if ("DELETE".equals(action)) {
+            try {
+                dao.DeleteRemise(code);
+            } catch (SQLException s) {
+                erreur = "Impossible de supprimer " + code + ", ce code est utilisé.";
+            }
+        }
+        
         List<RemiseEntity> RE = dao.AllRemise();
-
+        request.setAttribute("erreur", erreur);
         request.setAttribute("remises", RE);
         request.getRequestDispatcher("VueMain.jsp").forward(request, response);
     }
@@ -55,8 +81,10 @@ public class ServletAffichage extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
+            
         } catch (SQLException ex) {
-            Logger.getLogger(ServletAffichage.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServletAffichage.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -73,8 +101,10 @@ public class ServletAffichage extends HttpServlet {
             throws ServletException, IOException {
         try {
             processRequest(request, response);
+            
         } catch (SQLException ex) {
-            Logger.getLogger(ServletAffichage.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServletAffichage.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -89,3 +119,5 @@ public class ServletAffichage extends HttpServlet {
     }// </editor-fold>
 
 }
+
+// Question pour le prof, comment faire pour récupé

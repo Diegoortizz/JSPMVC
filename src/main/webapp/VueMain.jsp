@@ -15,15 +15,29 @@
         <title> Saisie d'un tableau de remise </title>
     </head>
     <body>
-        <p> ${taille} </p>
+
+        <form method='GET'>
+            Code : <input name="code" size="1" maxlength="1" pattern="[A-Z]{1}" title="Une lettre en MAJUSCULES"><br/>
+            Taux : <input name="taux" type="number" step="0.01" min="0.0" max="100" size="5"><br/>
+            <input  type="hidden" name="action" value="ADD">
+
+            <input type="submit" value="Ajouter">
+        </form>
 
         <table border=2>
-            <tr> <th>Id</th> <th>Name</th> <th>Address</th> </tr>
+            <tr> <th>Id</th> <th>Name</th> <th>Supprimer</th></tr>
 
             <c:forEach items="${remises}" var="element"> 
-                <tr> <td>${element.code}</td> <td> <fmt:formatNumber minIntegerDigits="2" minFractionDigits="2" maxFractionDigits="2" value="${element.taux}"/> % </td> </tr>
+                <tr> 
+                    <td>${element.code}</td> 
+                    <td> <fmt:formatNumber minIntegerDigits="2" minFractionDigits="2" maxFractionDigits="2" value="${element.taux}"/> % </td> 
+                    <td><a href="?action=DELETE&code=${element.code}" >delete</a></td>
+                    
+                </tr>
             </c:forEach>
         </table>
-        
+        <div><h4>${erreur}</h4></div>
+
+
     </body>
 </html>
